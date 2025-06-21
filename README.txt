@@ -1,74 +1,89 @@
-# AI Data Breach Detection System 🔐
+# AI-Powered Data Breach Detection System 🔐
 
-This project is an AI-powered system designed to detect early signs of a data breach. By analyzing system or network activity—such as login behavior, access frequency, and user patterns—this system uses machine learning models to classify events as normal or suspicious and raise alerts accordingly.
+A machine learning-based system that analyzes network traffic to detect early signs of data breaches. Trained on the UNSW-NB15 dataset, it classifies network activity as normal or malicious and is designed to support real-time prediction and alert generation in future versions.
 
 ---
 
 ## 🚀 Project Status
 
-🟩 *Project started: June 2025*  
-🛠️ *Currently working on: Dataset exploration and preprocessing*  
-📌 *Next step: Model training and evaluation*
+- 🟢 **Started:** June 2025  
+- ✅ Dataset loaded and validated  
+- ✅ Data preprocessing pipeline completed  
+- ✅ Random Forest model trained and saved  
+- 🛠️ **Next up:** Prediction pipeline + deployment preparation  
 
 ---
 
-## 🧠 Project Objectives
+## 🎯 Objectives
 
-- Detect early signs of data breaches using machine learning
-- Analyze activity logs to find abnormal behavior
-- Generate real-time alerts when suspicious activity is detected
-- Build an interactive dashboard to monitor predictions
+- Detect abnormal or malicious behavior from network traffic logs  
+- Preprocess and clean real-world intrusion detection data (UNSW-NB15)  
+- Train and evaluate a machine learning model for binary classification  
+- Save trained models for future reuse in predictions  
+- Lay the foundation for real-time monitoring and alerting via a dashboard  
 
 ---
 
-## 📁 Folder Structure
+## 🗂️ Project Structure
 
-ai_data_breach_system/
-│
-├── data/ # Raw and processed datasets
-├── notebooks/ # EDA and experiments in Jupyter
-├── src/ # All preprocessing, modeling, and alert code
-├── app/ # Dashboard code (Streamlit or Flask)
-├── main.py # Project entry point
-├── README.md # You're reading it!
-└── requirements.txt # Python dependencies
+AI-Data-Breach-System/
+├── Data/ # Raw UNSW-NB15 CSV files
+├── Models/ # Trained machine learning models (e.g., random_forest.pkl)
+├── Notebooks/ # Jupyter notebooks for EDA and experimentation
+├── src/ # Source code
+│ ├── data_processing.py # Data loading and preprocessing functions
+│ ├── model.py # Training, evaluation, and model saving
+│ └── predict.py # [Upcoming] Prediction script for new data
+├── main.py # [Optional] Project entry script
+├── requirements.txt # Project dependencies
+└── README.md # Project overview
 
-## 📊 Progress Log
 
-| Date       | Task Completed                                 |
-|------------|------------------------------------------------|
-| 2025-06-21 | ✅ Project initialized with GitHub + VS Code    |
-| 2025-06-21 | ✅ Folder structure and README created          |
-| YYYY-MM-DD | ⬜ Dataset selected and downloaded              |
-| YYYY-MM-DD | ⬜ Data cleaned and preprocessed                |
-| YYYY-MM-DD | ⬜ Model trained and evaluated                  |
-| YYYY-MM-DD | ⬜ Real-time alert system implemented           |
-| YYYY-MM-DD | ⬜ Dashboard deployed                           |
+---
+
+## 📈 Progress Log
+
+| Date       | Task Completed                                  |
+|------------|--------------------------------------------------|
+| 2025-06-21 | ✅ GitHub project initialized                    |
+| 2025-06-21 | ✅ Folder structure and starter files created    |
+| 2025-06-21 | ✅ Dataset loaded and verified                   |
+| 2025-06-21 | ✅ Data preprocessing completed using `sklearn` |
+| 2025-06-21 | ✅ Model trained and evaluated (Random Forest)   |
+| 2025-06-21 | ✅ Model saved using `joblib`                    |
+| 2025-06-21 | ✅ Pushed to GitHub (Note: model uses LFS due to size) |
+
+---
+
+## 🧠 Model Overview
+
+- **Algorithm:** `RandomForestClassifier` with `class_weight='balanced'`
+- **Accuracy:** ~99.8% on test set  
+- **Precision (malicious):** 0.98  
+- **Recall (malicious):** 0.97  
+- **Key Fix:** `ct_ftp_cmd` column had mixed string/NaN values → cleaned using `pd.to_numeric` + median fill  
 
 ---
 
 ## 🧰 Tech Stack
 
-- Python 3.11+
-- Pandas, NumPy
-- Scikit-learn / XGBoost / Isolation Forest
-- Streamlit or Flask (for frontend)
-- Git & GitHub (version control)
+- Python 3.11  
+- Pandas, NumPy  
+- Scikit-learn  
+- Joblib (for saving models)  
+- Git & GitHub (with LFS for large model files)
 
 ---
 
-## 📌 Notes to Self
+## 🔮 Next Steps
 
-- This README will be updated regularly with progress.
-- Every file will have clear inline comments explaining the purpose of each line.
+- [ ] Implement `predict.py` for loading and predicting on new samples  
+- [ ] Save and load label encoders for consistent transformation  
+- [ ] Add robust logging and exception handling  
+- [ ] Explore model optimization or alternati
 
----
+## 🙋‍♂️ Author
 
-## 📬 Contact
-
-Project by **Ibhav Malviya**  
-[LinkedIn](https://www.linkedin.com/in/ibhavmalviya/) 
-[GitHub](https://github.com/IbhavMalviya)
-
-
-
+**Ibhav Malviya**  
+LinkedIn: https://www.linkedin.com/in/ibhavmalviya
+GitHub: https://github.com/IbhavMalviya
