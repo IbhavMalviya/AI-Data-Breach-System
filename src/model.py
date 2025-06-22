@@ -51,3 +51,10 @@ joblib.dump(rf, model_path)
 def predict_new_data(model, new_data):
     # preprocess new_data same as training
     return model.predict(new_data)
+
+# Save the label encoders to reuse them in prediction
+encoders_path = os.path.join(model_dir, 'label_encoders.pkl')
+joblib.dump(label_encoders, encoders_path)
+print("✅ Model and encoders saved successfully.")
+# Save the model
+print(f"Model saved to {model_path}")

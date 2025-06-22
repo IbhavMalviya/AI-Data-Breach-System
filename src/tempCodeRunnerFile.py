@@ -1,98 +1,60 @@
 import pandas as pd
-import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, confusion_matrix
+from data_processing import load_data, preprocess_dataframe, split_and_clean
+import joblib
 
-def load_data(file_path1, file_path2, columns):
-    # Importing the both datasets of UNSW-NB15
-    df1 = pd.read_csv(file_path1, names=columns, skiprows=1, low_memory=False)
-    df2 = pd.read_csv(file_path2, names=columns, skiprows=1, low_memory=False)
+# Define column names
+columns = [
+    'srcip', 'sport', 'dstip', 'dsport', 'proto', 'state', 'dur', 'sbytes', 'dbytes',
+    'sttl', 'dttl', 'sloss', 'dloss', 'service', 'Sload', 'Dload', 'Spkts', 'Dpkts',
+    'swin', 'dwin', 'stcpb', 'dtcpb', 'smeansz', 'dmeansz', 'trans_depth', 'res_bdy_len',
+    'Sjit', 'Djit', 'Stime', 'Ltime', 'Sintpkt', 'Dintpkt', 'tcprtt', 'synack',
+    'ackdat', 'is_sm_ips_ports', 'ct_state_ttl', 'ct_flw_http_mthd', 'is_ftp_login',
+    'ct_ftp_cmd', 'ct_srv_src', 'ct_srv_dst', 'ct_dst_ltm', 'ct_src_ltm',
+    'ct_src_dport_ltm', 'ct_dst_sport_ltm', 'ct_dst_src_ltm', 'attack_cat', 'label'
+]
 
-    # Concatenating the two datasets into a single DataFrame
-    df = pd.concat([df1, df2], ignore_index=True)
+# Load and preprocess the data
+df = load_data(
+    "./Data/UNSW-NB15_1.csv",
+    "./Data/UNSW-NB15_2.csv",
+    columns
+)
+df, label_encoders = preprocess_dataframe(df)
+X_train, X_test, y_train, y_test = split_and_clean(df)
 
-    # Displaying basic information about the DataFrame
-    df.info()
+# Step 1: Create the model with class_weight='balanced'
+rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='balanced')
 
-    # Displaying the first few rows of the DataFrame
-    print(df.head())
+# Step 2: Train the model
+rf.fit(X_train, y_train)
 
-    # Checking for missing values in the DataFrame
-    print(df.isnull().sum())
+# Step 3: Make predictions
+y_pred = rf.predict(X_test)
 
-    # List all the columns in the DataFrame
-    print(df.columns.tolist())
+# Step 4: Evaluation
+print("Confusion Matrix:")
+print(confusion_matrix(y_test, y_pred))
 
-    # Displaying the unique values in the 'label' column
-    print(df['label'].value_counts())
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred))
 
-    return df
 
-def preprocess_dataframe(df):
-    # Dropping unnecessary columns from the DataFrame
-    df.drop(columns=['srcip', 'sport', 'dstip', 'dsport', 'attack_cat'], inplace=True)
+import os
 
-    # Columns with string values that need to be encoded
-    cat_columns = ['proto', 'service', 'state']
+model_dir = os.path.join(os.path.dirname(__file__), '..', 'Model')
+os.makedirs(model_dir, exist_ok=True)
+model_path = os.path.join(model_dir, 'random_forest.pkl')
+joblib.dump(rf, model_path)
 
-    # Creating encoder object
-    label_encoders = {}
+def predict_new_data(model, new_data):
+    # preprocess new_data same as training
+    return model.predict(new_data)
 
-    for col in cat_columns:
-        le = LabelEncoder()
-        df[col] = le.fit_transform(df[col])
-        label_encoders[col] = le  # Storing the encoder for later use
-
-    # Confirming that all values are now numeric
-    print(df.dtypes.value_counts())
-
-    # Checking class balance
-    print(df['label'].value_counts(normalize=True))
-
-    # Check for missing values
-    print("Missing values:", df.isnull().sum().sum())
-
-    # Confirm dataset shape
-    print("Shape of dataset:", df.shape)
-
-    return df, label_encoders
-
-def split_and_clean(df):
-    # Splitting the dataset into features (X) and target variable (y)
-    X = df.drop(columns=['label'])
-    y = df['label']
-
-    # Splitting the dataset into training and testing sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-
-    # Find non-numeric columns in X_train
-    non_numeric_cols = X_train.select_dtypes(include='object').columns
-    print("Non-numeric columns:\n", non_numeric_cols)
-
-    # Converting 'ct_ftp_cmd' column to numeric, replacing spaces with NaN
-    X_train['ct_ftp_cmd'] = pd.to_numeric(X_train['ct_ftp_cmd'].replace(' ', np.nan), errors='coerce')
-    X_test['ct_ftp_cmd'] = pd.to_numeric(X_test['ct_ftp_cmd'].replace(' ', np.nan), errors='coerce')
-
-    print(X_train['ct_ftp_cmd'].unique())
-
-    # Step 2: Fill NaNs with median
-    X_train['ct_ftp_cmd'].fillna(X_train['ct_ftp_cmd'].median(), inplace=True)
-    X_test['ct_ftp_cmd'].fillna(X_test['ct_ftp_cmd'].median(), inplace=True)
-
-    # Displaying the shapes of the training and testing sets
-    print("Shape of X_train:", X_train.shape)
-    print("Shape of X_test:", X_test.shape)
-
-    # Checking for NaN values in the training and testing sets
-    print("NaNs in X_train:", np.isnan(X_train).sum().sum())
-    print("NaNs in X_test:", np.isnan(X_test).sum().sum())
-
-    # Fill all missing values with the median of each column
-    X_train = X_train.fillna(X_train.median(numeric_only=True))
-    X_test = X_test.fillna(X_test.median(numeric_only=True))
-
-    # Checking for NaN values again after filling
-    print("✅ NaNs in X_train after clean-up:", X_train.isnull().sum().sum())
-    print("✅ NaNs in X_test after clean-up:", X_test.isnull().sum().sum())
-
-    return X_train, X_test, y_train, y_test
+# Save the label encoders to reuse them in prediction
+encoders_path = os.path.join(model_dir, 'label_encoders.pkl')
+joblib.dump(label_encoders, encoders_path)
+print("✅ Model and encoders saved successfully.")
+# Save the model
+print(f"Model saved to {model_path}")

@@ -96,3 +96,16 @@ def split_and_clean(df):
     print("✅ NaNs in X_test after clean-up:", X_test.isnull().sum().sum())
 
     return X_train, X_test, y_train, y_test
+
+def preprocess_new_data_sample(df, encoders):
+    df = df.copy()
+    df.drop(columns=['srcip', 'sport', 'dstip', 'dsport', 'attack_cat', 'label'], errors='ignore', inplace=True)
+
+    for col, le in encoders.items():
+        if col in df.columns:
+            df[col] = df[col].fillna('missing')
+            df[col] = le.transform(df[col])
+
+    # Fill any numeric NaNs with column median
+    df = df.apply(lambda x: x.fillna(x.median()) if x.dtype != 'O' else x)
+    return df
