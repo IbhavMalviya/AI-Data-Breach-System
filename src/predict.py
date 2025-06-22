@@ -2,32 +2,48 @@ import sys
 import os
 import pandas as pd
 import joblib
-from sklearn.ensemble import RandomForestClassifier
 
-# Load model and encoders
-model_path = os.path.join(os.path.dirname(__file__), '..', 'Model', 'random_forest.pkl')
-encoder_path = os.path.join(os.path.dirname(__file__), '..', 'Model', 'label_encoders.pkl')
+# Paths
+BASE_DIR = os.path.dirname(__file__)
+MODEL_DIR = os.path.join(BASE_DIR, '..', 'Model')
+model_path = os.path.join(MODEL_DIR, 'random_forest.pkl')
+encoder_path = os.path.join(MODEL_DIR, 'label_encoders.pkl')
+feature_path = os.path.join(MODEL_DIR, 'feature_columns.pkl')
 
+# Load model, encoders, and feature columns
 model = joblib.load(model_path)
 label_encoders = joblib.load(encoder_path)
+feature_columns = joblib.load(feature_path)
 
-# Define categorical columns
+# Define columns to transform or drop
 categorical_cols = ['proto', 'state', 'service']
-
-# Drop columns that were not used during training
 drop_cols = ['srcip', 'sport', 'dstip', 'dsport', 'attack_cat', 'label']
 
-def preprocess_new_data_sample(df, label_encoders):
+def preprocess_new_data_sample(df, label_encoders, feature_columns):
     df = df.copy()
+
+    # Drop target and unrelated columns if present
+    drop_cols = ['srcip', 'sport', 'dstip', 'dsport', 'attack_cat', 'label']
+    df.drop(columns=[col for col in drop_cols if col in df.columns], inplace=True, errors='ignore')
+
+    # Encode known categorical features
+    categorical_cols = ['proto', 'state', 'service']
     for col in categorical_cols:
-        if col in df.columns:
+        if col in df.columns and col in label_encoders:
             le = label_encoders[col]
             df[col] = df[col].map(lambda val: le.transform([val])[0] if val in le.classes_ else -1)
-    df = df.drop(columns=[col for col in drop_cols if col in df.columns])
+
+    # Keep only the columns used during training
+    for col in feature_columns:
+        if col not in df.columns:
+            df[col] = 0  # add missing columns as 0
+    df = df[feature_columns]  # ensure correct order
+
     df.fillna(0, inplace=True)
     return df
 
-# Check for CSV file
+
+# Load input CSV if provided
 if len(sys.argv) > 1:
     csv_path = sys.argv[1]
     if not os.path.exists(csv_path):
@@ -51,7 +67,7 @@ else:
     }])
 
 # Preprocess
-processed = preprocess_new_data_sample(df, label_encoders)
+processed = preprocess_new_data_sample(df, label_encoders, feature_columns)
 
 # Predict
 probs = model.predict_proba(processed)
@@ -63,6 +79,11 @@ for i, (p, prob) in enumerate(zip(preds, probs)):
     print(f"\n🔍 Sample {i+1} prediction: {label}")
     print(f"   → Probability (Normal, Malicious): {prob}")
 
-print("\n✅ Prediction completed successfully.")
-# Save predictions to CSV
+# Save to CSV
 output_df = df.copy()
+output_df['prediction'] = preds
+output_df['prob_normal'] = probs[:, 0]
+output_df['prob_malicious'] = probs[:, 1]
+output_df.to_csv('prediction_output.csv', index=False)
+print("\n✅ Prediction completed successfully.")
+print("📄 Results saved to 'prediction_output.csv'")

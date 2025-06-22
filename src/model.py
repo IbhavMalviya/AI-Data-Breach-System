@@ -30,6 +30,16 @@ rf = RandomForestClassifier(n_estimators=100, random_state=42, class_weight='bal
 # Step 2: Train the model
 rf.fit(X_train, y_train)
 
+# Save feature columns used during training
+feature_columns = X_train.columns.tolist()
+import os
+model_dir = os.path.join(os.path.dirname(__file__), '..', 'Model')
+os.makedirs(model_dir, exist_ok=True)
+feature_columns_path = os.path.join(model_dir, 'feature_columns.pkl')
+joblib.dump(feature_columns, feature_columns_path)
+print("🧠 Feature columns saved successfully.")
+
+
 # Step 3: Make predictions
 y_pred = rf.predict(X_test)
 
