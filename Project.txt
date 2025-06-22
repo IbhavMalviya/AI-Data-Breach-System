@@ -1,5 +1,0 @@
-Step 1. Defining the Problem
-“I’m building an AI-based system that monitors system or network activity logs to detect early signs of a data breach using machine learning.”
-
-
-This project aims to detect early signs of a data breach using machine learning. It analyzes system or network activity—such as login times, access frequency, and user behavior—to identify suspicious patterns. When potentially malicious activity is detected, the system generates alerts to notify the company as early as possible, helping them respond before a full breach occurs.
