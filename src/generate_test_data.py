@@ -11,7 +11,7 @@ state_options = ['FIN', 'CON', 'INT', 'REQ', 'RST', 'ACC']
 service_options = ['http', 'ftp', 'dns', 'ssh', '-', 'smtp']
 
 # Number of rows to generate
-n_rows = 100000
+n_rows = 25023
 
 # Generate synthetic data
 data = {

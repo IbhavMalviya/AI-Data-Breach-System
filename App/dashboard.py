@@ -30,11 +30,12 @@ def preprocess_input(df, encoders):
     # Drop unused columns
     df = df.drop(columns=[col for col in drop_cols if col in df.columns], errors='ignore')
 
-    # Fill missing values
-    df.fillna(0, inplace=True)
+    # Handle ct_ftp_cmd safely
+    if 'ct_ftp_cmd' in df.columns:
+        df['ct_ftp_cmd'] = pd.to_numeric(df['ct_ftp_cmd'].replace(' ', pd.NA), errors='coerce')
 
-    # Keep only the columns used during training
-    df = df[[col for col in feature_columns if col in df.columns]]
+    # Fill missing values with median (not 0)
+    df = df.fillna(df.median(numeric_only=True))
 
     # Ensure all expected columns are present
     for col in feature_columns:
@@ -44,6 +45,7 @@ def preprocess_input(df, encoders):
     # Reorder columns
     df = df[feature_columns]
     return df
+
 
 # --- Streamlit UI ---
 st.set_page_config(page_title="Data Breach Detector", layout="wide")

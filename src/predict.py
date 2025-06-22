@@ -1,6 +1,7 @@
 import sys
 import os
 import pandas as pd
+import numpy as np
 import joblib
 
 # Paths
@@ -22,28 +23,31 @@ drop_cols = ['srcip', 'sport', 'dstip', 'dsport', 'attack_cat', 'label']
 def preprocess_new_data_sample(df, label_encoders, feature_columns):
     df = df.copy()
 
-    # Drop target and unrelated columns if present
-    drop_cols = ['srcip', 'sport', 'dstip', 'dsport', 'attack_cat', 'label']
+    # Drop target and unrelated columns
     df.drop(columns=[col for col in drop_cols if col in df.columns], inplace=True, errors='ignore')
 
-    # Encode known categorical features
-    categorical_cols = ['proto', 'state', 'service']
+    # Encode categorical features
     for col in categorical_cols:
         if col in df.columns and col in label_encoders:
             le = label_encoders[col]
             df[col] = df[col].map(lambda val: le.transform([val])[0] if val in le.classes_ else -1)
 
-    # Keep only the columns used during training
+    # Ensure 'ct_ftp_cmd' is numeric and fill missing
+    if 'ct_ftp_cmd' in df.columns:
+        df['ct_ftp_cmd'] = pd.to_numeric(df['ct_ftp_cmd'].replace(' ', np.nan), errors='coerce')
+
+    # Fill remaining NaNs with median
+    df = df.fillna(df.median(numeric_only=True))
+
+    # Ensure all expected columns are present
     for col in feature_columns:
         if col not in df.columns:
-            df[col] = 0  # add missing columns as 0
-    df = df[feature_columns]  # ensure correct order
+            df[col] = 0
+    df = df[feature_columns]  # Ensure correct column order
 
-    df.fillna(0, inplace=True)
     return df
 
-
-# Load input CSV if provided
+# Load input
 if len(sys.argv) > 1:
     csv_path = sys.argv[1]
     if not os.path.exists(csv_path):
@@ -66,10 +70,8 @@ else:
         'attack_cat': 'Normal', 'label': 0
     }])
 
-# Preprocess
+# Preprocess and predict
 processed = preprocess_new_data_sample(df, label_encoders, feature_columns)
-
-# Predict
 probs = model.predict_proba(processed)
 preds = model.predict(processed)
 
@@ -79,7 +81,7 @@ for i, (p, prob) in enumerate(zip(preds, probs)):
     print(f"\n🔍 Sample {i+1} prediction: {label}")
     print(f"   → Probability (Normal, Malicious): {prob}")
 
-# Save to CSV
+# Save results
 output_df = df.copy()
 output_df['prediction'] = preds
 output_df['prob_normal'] = probs[:, 0]
