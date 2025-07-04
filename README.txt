@@ -29,12 +29,14 @@ A machine learning-based system that analyzes network traffic to detect early si
 AI-Data-Breach-System/
 ├── Data/ # Raw UNSW-NB15 CSV files
 ├── Models/ # Trained machine learning models (e.g., random_forest.pkl)
+│ ├── random_forest.pkl
+│ ├── label_encoders.pkl
+│ ├── random_forest.pkl
 ├── Notebooks/ # Jupyter notebooks for EDA and experimentation
 ├── src/ # Source code
 │ ├── data_processing.py # Data loading and preprocessing functions
 │ ├── model.py # Training, evaluation, and model saving
 │ └── predict.py # [Upcoming] Prediction script for new data
-├── main.py # [Optional] Project entry script
 ├── requirements.txt # Project dependencies
 └── README.md # Project overview
 
@@ -66,6 +68,20 @@ AI-Data-Breach-System/
 - **Recall (malicious):** 0.97  
 - **Trained On: Cleaned and processed UNSW-NB15 dataset
 - **Key Fix:** `ct_ftp_cmd` column had mixed string/NaN values → cleaned using `pd.to_numeric` + median fill  
+
+Confusion Matrix:
+[264542    366]
+[408       14684]
+
+Classification Report:
+                 precision    recall    f1-score    support
+
+           0       1.00        1.00      1.00       264908
+           1       0.98        0.97      0.97        15092
+
+    accuracy                             1.00       280000
+   macro avg       0.99        0.99      0.99       280000
+weighted avg       1.00        1.00      1.00       280000
 
 ---
 
