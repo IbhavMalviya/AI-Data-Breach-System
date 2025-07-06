@@ -29,7 +29,7 @@ st.sidebar.markdown("""
     </a><br><br>
     <a href="https://github.com/IbhavMalviya" target="_blank" style="text-decoration: none;">
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" width="24" style="vertical-align: middle; margin-right: 6px;"/>
-        <span style="font-size: 15px; color: #333;">GitHub</span>
+        <span style="font-size: 15px; color: #000000;">GitHub</span>
     </a>
 </div>
 """, unsafe_allow_html=True)
