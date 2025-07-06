@@ -33,9 +33,8 @@ st.sidebar.markdown("""
     </a>
 </div>
 """, unsafe_allow_html=True)
-
 st.sidebar.markdown("---")
-selected_model_name = st.sidebar.selectbox("🤖 Choose a model", ["Random Forest", "XGBoost", "MLPClassifier"])
+selected_model_name = st.sidebar.selectbox("🕹️ Choose a model", ["Random Forest", "XGBoost", "MLPClassifier"])
 
 # --- Load Models and Preprocessors ---
 base_dir = os.path.dirname(__file__)
