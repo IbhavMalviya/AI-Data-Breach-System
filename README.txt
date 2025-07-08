@@ -1,6 +1,7 @@
 🔐 AI-Powered Data Breach Detection System
 A production-ready machine learning system to detect early signs of data breaches by analyzing real-time network traffic. Trained on the UNSW-NB15 dataset, this system classifies traffic as normal or malicious with high accuracy and is equipped with a professional Streamlit dashboard, SHAP-based explainability, Docker support, and multi-model evaluation.
 
+------------------------------------------------------------------------------------
 📌 Table of Contents
 
 * 🚀 Project Status
@@ -16,6 +17,7 @@ A production-ready machine learning system to detect early signs of data breache
 * 🗂️ Notebooks
 * 🙋‍♂️ Author
 
+------------------------------------------------------------------------------------
 🚀 Project Status
 | Date       | Task                                                                                       |
 | ---------- | -----------------------------------------------------------------------------------------  |
@@ -29,19 +31,20 @@ A production-ready machine learning system to detect early signs of data breache
 | 2025-06-27 | ✅ Docker support for local deployment                                                     |
 | 2025-06-28 | ✅ Deployed to Streamlit Cloud: [🔗 app link](https://ai-data-breach-system.streamlit.app) |
 
+------------------------------------------------------------------------------------
 
 🎯 Objectives
-✅ Detect abnormal/malicious network behavior via ML
+-✅ Detect abnormal/malicious network behavior via ML
 
-✅ Train, compare and evaluate multiple models
+-✅ Train, compare and evaluate multiple models
 
-✅ Provide explainability with SHAP values
+-✅ Provide explainability with SHAP values
 
-✅ Build a clean, intuitive Streamlit dashboard for live inference
+-✅ Build a clean, intuitive Streamlit dashboard for live inference
 
-✅ Enable deployment via both Streamlit and Docker
+-✅ Enable deployment via both Streamlit and Docker
 
-
+------------------------------------------------------------------------------------
 📁 Project Structure
 
 AI-Data-Breach-System/
@@ -77,16 +80,16 @@ AI-Data-Breach-System/
 ├── requirements.txt
 └── README.md
 
-
+------------------------------------------------------------------------------------
 📊 Dataset Used: UNSW-NB15
-Includes real attack traffic and normal traffic across multiple sessions
+- Includes real attack traffic and normal traffic across multiple sessions
 
-Features like protocol, packet size, duration, services, flow behavior, and more
+- Features like protocol, packet size, duration, services, flow behavior, and more
+ 
+- 49 total features + label (0 = Normal, 1 = Malicious)
 
-49 total features + label (0 = Normal, 1 = Malicious)
-
-Size: ~2.5M rows (used first 2 subsets for training)
-
+- Size: ~2.5M rows (used first 2 subsets for training)
+------------------------------------------------------------------------------------
 
 🧠 Model Overview 
 | Metric        | Value                                 |
@@ -107,7 +110,7 @@ Classification Report:
      Normal       1.00       1.00      1.00    264908
   Malicious       0.98       0.97      0.97     15092
 
-
+------------------------------------------------------------------------------------
 
 📊 Model Comparison
 | Model                  | Accuracy | F1 Score | Train Time |
@@ -117,48 +120,45 @@ Classification Report:
 | MLPClassifier (Neural) | 0.9923   | 0.9438   | 23.4s      |
 
 
+------------------------------------------------------------------------------------
 🧪 SHAP Explainability
 SHAP (SHapley Additive exPlanations) helps explain individual predictions by attributing contributions to each feature.
 
-Visualize most influential features causing malicious detection
+- Visualize most influential features causing malicious detection
 
-Use SHAP summary plot to interpret global model behavior
+- Use SHAP summary plot to interpret global model behavior
 
-
+------------------------------------------------------------------------------------
 
 🖥️ Streamlit Dashboard
 Deployed App: https://ai-data-breach-system.streamlit.app
-
 Upload your network log .csv and view predictions + confidence scores instantly!
 
 Key Features:
-✅ Prediction table with probabilities
+- ✅ Prediction table with probabilities
 
-✅ Pie chart for class distribution
+- ✅ Pie chart for class distribution
 
-✅ Confidence histogram
+- ✅ Confidence histogram
 
-✅ Bar chart of normal vs malicious
+- ✅ Bar chart of normal vs malicious
 
-✅ Downloadable result CSV
+- ✅ Downloadable result CSV
 
-✅ Professional sidebar with GitHub + LinkedIn
+- ✅ Professional sidebar with GitHub + LinkedIn
 
-
+------------------------------------------------------------------------------------
 
 🐳 Docker Support
 🧱 Build the Docker image:
 docker build -t data-breach-app .
-
 
 🚀 Run the container:
 docker run -p 8501:8501 data-breach-app
 
 Open http://localhost:8501 to use the app.
 
-
-
-
+------------------------------------------------------------------------------------
 💻 Local Installation
 1. Clone the repository:
 git clone https://github.com/IbhavMalviya/AI-Data-Breach-System.git
@@ -170,6 +170,7 @@ pip install -r requirements.txt
 3. Run the app:
 streamlit run App/dashboard.py
 
+------------------------------------------------------------------------------------
 
 🙋‍♂️ Author
 Ibhav Malviya
