@@ -1,3 +1,4 @@
+#  Import necessary libraries
 import pandas as pd
 import numpy as np
 import time
@@ -6,6 +7,7 @@ import os
 import matplotlib.pyplot as plt
 import shap
 
+# Importing sklearn and other libraries for model training and evaluation
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score, f1_score, confusion_matrix, classification_report
@@ -14,7 +16,7 @@ from sklearn.preprocessing import LabelEncoder
 from xgboost import XGBClassifier
 from imblearn.over_sampling import SMOTE
 
-# --- Load Data ---
+# Loading the data (Same as usual)
 columns = [
     'srcip', 'sport', 'dstip', 'dsport', 'proto', 'state', 'dur', 'sbytes', 'dbytes',
     'sttl', 'dttl', 'sloss', 'dloss', 'service', 'Sload', 'Dload', 'Spkts', 'Dpkts',
@@ -30,7 +32,7 @@ df2 = pd.read_csv('./Data/UNSW-NB15_2.csv', names=columns, skiprows=1, low_memor
 df = pd.concat([df1, df2], ignore_index=True)
 df.drop(columns=['srcip', 'sport', 'dstip', 'dsport', 'attack_cat'], inplace=True)
 
-# --- Preprocessing ---
+# Preprocessing the data again
 cat_columns = ['proto', 'service', 'state']
 label_encoders = {}
 for col in cat_columns:
@@ -44,17 +46,18 @@ df.fillna(df.median(numeric_only=True), inplace=True)
 X = df.drop(columns=['label'])
 y = df['label']
 
-# --- Split and SMOTE ---
+# Splitting and applying SMOTE over the dataset ---
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=42)
 smote = SMOTE(random_state=42)
 X_train, y_train = smote.fit_resample(X_train, y_train)
 
+# Scaling the data using StandardScaler from sklearn
 from sklearn.preprocessing import StandardScaler
 scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# --- Model Training & Evaluation ---
+# Model Training & Evaluation of 3 different models
 def train_and_evaluate(model, name):
     print(f"\n🔧 Training {name}...")
     start = time.time()
@@ -74,6 +77,7 @@ def train_and_evaluate(model, name):
     return name, acc, f1, end - start
 
 results = []
+# Training and evaluating Random Forest
 print("\n🔧 Training Random Forest...")
 rf = RandomForestClassifier(n_estimators=100, class_weight='balanced', random_state=42)
 start = time.time()
@@ -93,7 +97,7 @@ print(cm)
 
 results.append(('Random Forest', acc, f1, end - start))
 
-
+# Training and evaluating XGBoost
 print("\n🔧 Training XGBoost...")
 xgb = XGBClassifier(eval_metric='logloss', random_state=42)
 start = time.time()
@@ -113,6 +117,7 @@ print(cm)
 
 results.append(('XGBoost', acc, f1, end - start))
 
+# Training and evaluating MLPClassifier (Neural Network)
 print("\n🔧 Training MLPClassifier (Neural Net)...")
 mlp = MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=300, early_stopping=True, random_state=42)
 
@@ -134,13 +139,13 @@ print(cm)
 results.append(('MLPClassifier (Neural Net)', acc, f1, end - start))
 
 
-# --- Comparison Table ---
+# Comparison Table of all the models
 results_df = pd.DataFrame(results, columns=['Model', 'Accuracy', 'F1 Score', 'Train Time (s)'])
 print("\n\n📊 Model Comparison:")
 print(results_df.to_string(index=False))
 
 
-# Plot Accuracy & F1 Score
+# Plotting Accuracy & F1 Score of each model to compare them visually
 model_names = [r[0] for r in results]
 accuracies = [r[1] for r in results]
 f1_scores = [r[2] for r in results]
@@ -176,23 +181,18 @@ else:
     shap.summary_plot(shap_values, X_test[:100], show=False)
 import matplotlib.pyplot as plt
 plt.savefig("Model/rf_shap_summary.png", dpi=300, bbox_inches='tight')
-# Save models and results
 
 
-import pandas as pd
-import os
-import joblib
-
-# Define model directory (if not already defined)
+# Definining model directory
 model_dir = os.path.join(os.path.dirname(__file__), '..', 'Model')
 os.makedirs(model_dir, exist_ok=True)
 
-# Save models
+# Saving models
 joblib.dump(rf, os.path.join(model_dir, 'random_forest.pkl'))
 joblib.dump(xgb, os.path.join(model_dir, 'xgboost.pkl'))
 joblib.dump(mlp, os.path.join(model_dir, 'mlp.pkl'))
 
-# Save results as CSV
+# Saving results as CSV
 results_df = pd.DataFrame(results, columns=["Model", "Accuracy", "F1 Score", "Train Time (s)"])
 results_df.to_csv(os.path.join(model_dir, 'model_metrics.csv'), index=False)
 

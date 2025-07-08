@@ -1,3 +1,4 @@
+# Importing necessary libraries
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
@@ -8,19 +9,19 @@ def load_data(file_path1, file_path2, columns):
     df1 = pd.read_csv(file_path1, names=columns, skiprows=1, low_memory=False)
     df2 = pd.read_csv(file_path2, names=columns, skiprows=1, low_memory=False)
 
-    # Concatenating the two datasets into a single DataFrame
+    # Concatenating the two datasets into a single dataframe
     df = pd.concat([df1, df2], ignore_index=True)
 
-    # Displaying basic information about the DataFrame
+    # Displaying basic information about the dataframe
     df.info()
 
-    # Displaying the first few rows of the DataFrame
+    # Displaying the first few rows of the dataframe
     print(df.head())
 
-    # Checking for missing values in the DataFrame
+    # Checking for any missing values in the dataframe
     print(df.isnull().sum())
 
-    # List all the columns in the DataFrame
+    # Listing all the columns in the dataframe
     print(df.columns.tolist())
 
     # Displaying the unique values in the 'label' column
@@ -29,7 +30,7 @@ def load_data(file_path1, file_path2, columns):
     return df
 
 def preprocess_dataframe(df):
-    # Dropping unnecessary columns from the DataFrame
+    # Dropping unnecessary columns from the dataframe which are not needed for analysis
     df.drop(columns=['srcip', 'sport', 'dstip', 'dsport', 'attack_cat'], inplace=True)
 
     # Columns with string values that need to be encoded
@@ -41,18 +42,18 @@ def preprocess_dataframe(df):
     for col in cat_columns:
         le = LabelEncoder()
         df[col] = le.fit_transform(df[col])
-        label_encoders[col] = le  # Storing the encoder for later use
+        label_encoders[col] = le                      # Storing the encoder for later use
 
-    # Confirming that all values are now numeric
+    # Confirming that all values are now numeric in nature
     print(df.dtypes.value_counts())
 
     # Checking class balance
     print(df['label'].value_counts(normalize=True))
 
-    # Check for missing values
+    # Checking for missing values
     print("Missing values:", df.isnull().sum().sum())
 
-    # Confirm dataset shape
+    # Confirming dataset shape
     print("Shape of dataset:", df.shape)
 
     return df, label_encoders
@@ -65,7 +66,7 @@ def split_and_clean(df):
     # Splitting the dataset into training and testing sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-    # Find non-numeric columns in X_train
+    # Finding non-numeric columns in X_train
     non_numeric_cols = X_train.select_dtypes(include='object').columns
     print("Non-numeric columns:\n", non_numeric_cols)
 
@@ -87,7 +88,7 @@ def split_and_clean(df):
     print("NaNs in X_train:", np.isnan(X_train).sum().sum())
     print("NaNs in X_test:", np.isnan(X_test).sum().sum())
 
-    # Fill all missing values with the median of each column
+    # Filling all missing values with the median of each column
     X_train = X_train.fillna(X_train.median(numeric_only=True))
     X_test = X_test.fillna(X_test.median(numeric_only=True))
 
@@ -106,6 +107,6 @@ def preprocess_new_data_sample(df, encoders):
             df[col] = df[col].fillna('missing')
             df[col] = le.transform(df[col])
 
-    # Fill any numeric NaNs with column median
+    # Filling any numeric NaNs with column median
     df = df.apply(lambda x: x.fillna(x.median()) if x.dtype != 'O' else x)
     return df
