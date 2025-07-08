@@ -1,126 +1,181 @@
-# AI-Powered Data Breach Detection System 🔐
+🔐 AI-Powered Data Breach Detection System
+A production-ready machine learning system to detect early signs of data breaches by analyzing real-time network traffic. Trained on the UNSW-NB15 dataset, this system classifies traffic as normal or malicious with high accuracy and is equipped with a professional Streamlit dashboard, SHAP-based explainability, Docker support, and multi-model evaluation.
 
-A machine learning-based system that analyzes network traffic to detect early signs of data breaches. Trained on the UNSW-NB15 dataset, it classifies network activity as normal or malicious and is designed to support real-time prediction and alert generation in future versions.
+📌 Table of Contents
 
----
+* 🚀 Project Status
+* 🎯 Objectives
+* 📁 Project Structure
+* 📊 Dataset Used
+* 🧠 Model Overview
+* 📊 Model Comparison
+* 🧪 SHAP Explainability
+* 🖥️ Streamlit Dashboard
+* 🐳 Docker Support
+* 💻 Local Installation
+* 🗂️ Notebooks
+* 🙋‍♂️ Author
 
-## 🚀 Project Status
+🚀 Project Status
+| Date       | Task                                                                                       |
+| ---------- | -----------------------------------------------------------------------------------------  |
+| 2025-06-21 | ✅ Project initialized with GitHub + clean folder structure                                |
+| 2025-06-21 | ✅ UNSW-NB15 dataset loaded and validated                                                  |
+| 2025-06-22 | ✅ Preprocessing: label encoding, cleaning, SMOTE applied                                  |
+| 2025-06-23 | ✅ Random Forest model trained, evaluated, saved with joblib                               |
+| 2025-06-24 | ✅ Added XGBoost & MLPClassifier comparison and plots                                      |
+| 2025-06-25 | ✅ SHAP explainability integrated and plotted                                              |
+| 2025-06-26 | ✅ Streamlit UI with visual feedback: charts, metrics, prediction                          |
+| 2025-06-27 | ✅ Docker support for local deployment                                                     |
+| 2025-06-28 | ✅ Deployed to Streamlit Cloud: [🔗 app link](https://ai-data-breach-system.streamlit.app) |
 
-- 🟢 **Started:** June 2025  
-- ✅ Dataset loaded and validated  
-- ✅ Data preprocessing pipeline completed  
-- ✅ Random Forest model trained and saved  
-- ✅ Prediction pipeline + deployment preparation  
 
----
+🎯 Objectives
+✅ Detect abnormal/malicious network behavior via ML
 
-## 🎯 Objectives
+✅ Train, compare and evaluate multiple models
 
-- Detect abnormal or malicious behavior from network traffic logs  
-- Preprocess and clean real-world intrusion detection data (UNSW-NB15)  
-- Train and evaluate a machine learning model for binary classification  
-- Save trained models for future reuse in predictions  
-- Lay the foundation for real-time monitoring and alerting via a dashboard  
+✅ Provide explainability with SHAP values
 
----
+✅ Build a clean, intuitive Streamlit dashboard for live inference
 
-## 🗂️ Project Structure
+✅ Enable deployment via both Streamlit and Docker
+
+
+📁 Project Structure
 
 AI-Data-Breach-System/
-├── Data/ # Raw UNSW-NB15 CSV files
-├── Models/ # Trained machine learning models (e.g., random_forest.pkl)
-│ ├── random_forest.pkl
-│ ├── label_encoders.pkl
-│ ├── random_forest.pkl
-├── Notebooks/ # Jupyter notebooks for EDA and experimentation
-├── src/ # Source code
-│ ├── data_processing.py # Data loading and preprocessing functions
-│ ├── model.py # Training, evaluation, and model saving
-│ └── predict.py # [Upcoming] Prediction script for new data
-├── requirements.txt # Project dependencies
-└── README.md # Project overview
+│
+├── App/
+│   └── dashboard.py              # Streamlit App
+│
+├── Data/
+│   ├── UNSW-NB15_1.csv
+│   └── UNSW-NB15_2.csv
+│
+├── Model/
+│   ├── random_forest.pkl
+│   ├── xgboost.pkl
+│   ├── mlp.pkl
+│   ├── label_encoders.pkl
+│   ├── feature_columns.pkl
+│   └── model_metrics.csv
+│
+├── Notebooks/
+│   ├── 1_data_eda.ipynb
+│   ├── 2_model_training.ipynb
+│   ├── 3_model_comparison.ipynb
+│   └── 4_streamlit_deployment.ipynb
+│
+├── src/
+│   ├── data_processing.py
+│   ├── model.py
+│   ├── predict.py
+│   └── train_compare_models.py
+│
+├── Dockerfile
+├── requirements.txt
+└── README.md
 
 
----
+📊 Dataset Used: UNSW-NB15
+Includes real attack traffic and normal traffic across multiple sessions
 
-## 📈 Progress Log
+Features like protocol, packet size, duration, services, flow behavior, and more
 
-| Date       | Task Completed                                  
-|------------|--------------------------------------------------
-| 2025-06-21 | ✅ GitHub project initialized                    
-| 2025-06-21 | ✅ Folder structure and starter files created    
-| 2025-06-21 | ✅ Dataset loaded and verified                   
-| 2025-06-21 | ✅ Data preprocessing completed using `sklearn` 
-| 2025-06-21 | ✅ Model trained and evaluated (Random Forest)   
-| 2025-06-21 | ✅ Model saved using `joblib`                    
-| 2025-06-21 | ✅ Pushed to GitHub (Note: model uses LFS due to size) 
-| 2025-06-22 | ✅ Streamlit frontend added and tested
-| 2025-06-22 | ✅ Synthetic data generation & robustness tests
-| 2025-06-22 | 🔄 Evaluation on edge cases underway
-| 2025-06-22 | ☁️ Deploy to Streamlit Cloud & Hugging Face
----
+49 total features + label (0 = Normal, 1 = Malicious)
 
-## 🧠 Model Overview
+Size: ~2.5M rows (used first 2 subsets for training)
 
-- **Algorithm:** `RandomForestClassifier` with `class_weight='balanced'`
-- **Accuracy:** ~99.8% on test set  
-- **Precision (malicious):** 0.98  
-- **Recall (malicious):** 0.97  
-- **Trained On: Cleaned and processed UNSW-NB15 dataset
-- **Key Fix:** `ct_ftp_cmd` column had mixed string/NaN values → cleaned using `pd.to_numeric` + median fill  
+
+🧠 Model Overview 
+| Metric        | Value                                 |
+| ------------- | ------------------------------------- |
+| Algorithm     | Random Forest                         |
+| Accuracy      | 99.8%                                 |
+| F1 Score      | 97%                                   |
+| Class Weight  | Balanced                              |
+| Preprocessing | Label Encoding + SMOTE + NaN Handling |
+| Saved Using   | joblib                                |
 
 Confusion Matrix:
-[264542    366]
-[408       14684]
+[[264542    366]
+ [   408  14684]]
 
 Classification Report:
-                 precision    recall    f1-score    support
+              precision    recall  f1-score   support
+     Normal       1.00       1.00      1.00    264908
+  Malicious       0.98       0.97      0.97     15092
 
-           0       1.00        1.00      1.00       264908
-           1       0.98        0.97      0.97        15092
 
-    accuracy                             1.00       280000
-   macro avg       0.99        0.99      0.99       280000
-weighted avg       1.00        1.00      1.00       280000
 
----
+📊 Model Comparison
+| Model                  | Accuracy | F1 Score | Train Time |
+| ---------------------- | -------- | -------- | ---------- |
+| Random Forest          | 0.9984   | 0.9702   | 1.5s       |
+| XGBoost                | 0.9986   | 0.9710   | 6.3s       |
+| MLPClassifier (Neural) | 0.9923   | 0.9438   | 23.4s      |
 
-## 🧰 Tech Stack
 
-- Python 3.11  
-- Pandas, NumPy  
-- Scikit-learn  
-- Joblib (for saving models)  
-- Git & GitHub (with LFS for large model files)
-- Streamlit (for UI)
----
+🧪 SHAP Explainability
+SHAP (SHapley Additive exPlanations) helps explain individual predictions by attributing contributions to each feature.
+
+Visualize most influential features causing malicious detection
+
+Use SHAP summary plot to interpret global model behavior
+
+
 
 🖥️ Streamlit Dashboard
-Upload a .csv file containing network traffic logs to see instant predictions with visual feedback.
+Deployed App: https://ai-data-breach-system.streamlit.app
 
-Features:
-✅ Tabular prediction output with confidence scores
+Upload your network log .csv and view predictions + confidence scores instantly!
 
-✅ Pie chart: Prediction distribution
+Key Features:
+✅ Prediction table with probabilities
 
-✅ Histogram: Confidence levels
+✅ Pie chart for class distribution
 
-✅ Bar chart: Total counts
+✅ Confidence histogram
 
-✅ Downloadable CSV with predictions
+✅ Bar chart of normal vs malicious
+
+✅ Downloadable result CSV
+
+✅ Professional sidebar with GitHub + LinkedIn
 
 
-📦 Installation
+
+🐳 Docker Support
+🧱 Build the Docker image:
+docker build -t data-breach-app .
+
+
+🚀 Run the container:
+docker run -p 8501:8501 data-breach-app
+
+Open http://localhost:8501 to use the app.
+
+
+
+
+💻 Local Installation
+1. Clone the repository:
 git clone https://github.com/IbhavMalviya/AI-Data-Breach-System.git
 cd AI-Data-Breach-System
+
+2. Install dependencies:
 pip install -r requirements.txt
 
-Run it locally:
-streamlit run app/dashboard.py
+3. Run the app:
+streamlit run App/dashboard.py
 
 
-## 🙋‍♂️ Author
+🙋‍♂️ Author
+Ibhav Malviya
 
-**Ibhav Malviya**  
-LinkedIn: https://www.linkedin.com/in/ibhavmalviya
-GitHub: https://github.com/IbhavMalviya
+💼 LinkedIn: linkedin.com/in/ibhavmalviya
+
+💻 GitHub: github.com/IbhavMalviya
+
+If this project helped you or inspired you, consider giving it a ⭐ on GitHub!
