@@ -4,7 +4,6 @@ A production-ready machine learning system to detect early signs of data breache
 ------------------------------------------------------------------------------------
 📌 Table of Contents
 
-* 🚀 Project Status
 * 🎯 Objectives
 * 📁 Project Structure
 * 📊 Dataset Used
@@ -16,21 +15,6 @@ A production-ready machine learning system to detect early signs of data breache
 * 💻 Local Installation
 * 🗂️ Notebooks
 * 🙋‍♂️ Author
-
-------------------------------------------------------------------------------------
-🚀 Project Status
-| Date       | Task                                                                                       |
-| ---------- | -----------------------------------------------------------------------------------------  |
-| 2025-06-21 | ✅ Project initialized with GitHub + clean folder structure                                |
-| 2025-06-21 | ✅ UNSW-NB15 dataset loaded and validated                                                  |
-| 2025-06-22 | ✅ Preprocessing: label encoding, cleaning, SMOTE applied                                  |
-| 2025-06-23 | ✅ Random Forest model trained, evaluated, saved with joblib                               |
-| 2025-06-24 | ✅ Added XGBoost & MLPClassifier comparison and plots                                      |
-| 2025-06-25 | ✅ SHAP explainability integrated and plotted                                              |
-| 2025-06-26 | ✅ Streamlit UI with visual feedback: charts, metrics, prediction                          |
-| 2025-06-27 | ✅ Docker support for local deployment                                                     |
-| 2025-06-28 | ✅ Deployed to Streamlit Cloud: [🔗 app link](https://ai-data-breach-system.streamlit.app) |
-
 ------------------------------------------------------------------------------------
 
 🎯 Objectives
